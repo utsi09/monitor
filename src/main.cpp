@@ -47,12 +47,12 @@ int main(int argc, char** argv)
     //팩토리 설정
     factory.registerNodeType<UpdateSystemState>("UpdateSystemState");
 
-    factory.registerNodeType<LidarCheck>("LidarCheck");
-    factory.registerNodeType<CameraCheck>("CameraCheck");
-    factory.registerNodeType<ImuCheck>("ImuCheck");
-    factory.registerNodeType<GpsCheck>("GpsCheck");
+    // factory.registerNodeType<LidarCheck>("LidarCheck");
+    // factory.registerNodeType<CameraCheck>("CameraCheck");
+    // factory.registerNodeType<ImuCheck>("ImuCheck");
+    // factory.registerNodeType<GpsCheck>("GpsCheck");
 
-    factory.registerNodeType<CalculateFTTI>("CalculateFTTI");
+    // factory.registerNodeType<CalculateFTTI>("CalculateFTTI");
     //
     auto tree = factory.createTreeFromFile(tree_path, blackboard);
     BT::Groot2Publisher groot_publisher(tree, 1666); //groot 퍼블리셔

@@ -27,11 +27,11 @@ endif()
 add_executable(monitor_node
   src/main.cpp
   src/update_system_state.cpp
-  src/lidar_check.cpp
-  src/camera_check.cpp
-  src/imu_check.cpp
-  src/gps_check.cpp
-  src/calculate_ftti.cpp
+  # src/lidar_check.cpp
+  # src/camera_check.cpp
+  # src/imu_check.cpp
+  # src/gps_check.cpp
+  # src/calculate_ftti.cpp
 )
 
 target_include_directories(monitor_node PUBLIC
@@ -41,9 +41,13 @@ target_include_directories(monitor_node PUBLIC
 
 target_link_libraries(monitor_node
   behaviortree_cpp::behaviortree_cpp
-  rclcpp::rclcpp
-  geometry_msgs::geometry_msgs
-  sensor_msgs::sensor_msgs
+)
+
+ament_target_dependencies(monitor_node
+  rclcpp
+  geometry_msgs
+  sensor_msgs
+  ament_index_cpp
 )
 
 install(TARGETS monitor_node

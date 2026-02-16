@@ -4,11 +4,13 @@
 using namespace BT;
 
 class UpdateSystemState : public SyncActionNode {
-    public:
-        UpdateSystemState(const std::string& name, const NodeConfig& config)
+public:
+    UpdateSystemState(const std::string& name, const NodeConfig& config);
 
-        static PortList providedPorts();
-        NodeStatus tick() override;
-    private:
+    static PortsList providedPorts();
+
+    NodeStatus tick() override;
+
+private:
         
-}
+};
