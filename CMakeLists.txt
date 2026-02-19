@@ -11,6 +11,11 @@ find_package(rclcpp REQUIRED)
 find_package(behaviortree_cpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(behaviortree_ros2 REQUIRED)
+find_package(visualization_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -48,6 +53,11 @@ ament_target_dependencies(monitor_node
   geometry_msgs
   sensor_msgs
   ament_index_cpp
+  behaviortree_ros2
+  visualization_msgs
+  tf2_ros
+  tf2
+  tf2_geometry_msgs
 )
 
 install(TARGETS monitor_node

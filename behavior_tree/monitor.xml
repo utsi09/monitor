@@ -2,22 +2,32 @@
     <BehaviorTree ID="MainTree">
         <Sequence name="MainLoop">
             
-            <Action ID="UpdateSystemState" 
-                    topic_vel="/vel" 
-                    topic_heading="/heading"
+            <Parallel name="Subscribers" success_count="2" failure_count="1">
 
-                    current_vel="{@current_vel}"
-                    current_heading="{@current_heading}"
-                    current_w="{@current_w}"/>
+                <Action ID="VelSubscriber"
+                topic_name="/vel"
+                vel_x="{@vel_x}"
+                vel_y="{@vel_y}"/>
 
-            <!-- <Parallel failure_threshold="1" success_threshold="4">
-                <Action ID="LidarCheck" name="LidarCheck"  topic="/lidar_points" min_hz="9.0"/>
-                <Action ID="CameraCheck" name="CameraCheck" topic="/zed/zed_node/rgb/color/rect/image/compressed" min_hz="10.0"/>
-                <Action ID="ImuCheck" name="ImuCheck"    topic="/imu/data" min_hz="50.0"/>
-                <Action ID="GpsCheck" name="GpsCheck"    topic="/fix" min_hz="1.0"/>
+                <Action ID="HeadingSubscriber"
+                topic_name="/heading"
+                current_heading="{@current_heading}"/>
             </Parallel>
 
-            <Action ID="CalculateFTTI" 
+            <Action ID="UpdateSystemState"
+                    vel_x="{@vel_x}"
+                    vel_y="{@vel_y}"
+                    current_heading="{@current_heading}"
+                    important_sensors="{@important_sensors}"/>
+
+            <Parallel name="SensorChecks" success_count="1" failure_count="1">
+                <Action ID="LidarChecker" name="LidarChecker" topic_name="/lidar_points" lidar_timeout="{@lidar_timeout}"/>
+                <!-- <Action ID="CameraCheck" name="CameraCheck" topic="/zed/zed_node/rgb/color/rect/image/compressed" min_hz="10.0"/>
+                <Action ID="ImuCheck" name="ImuCheck"    topic="/imu/data" min_hz="50.0"/>
+                <Action ID="GpsCheck" name="GpsCheck"    topic="/fix" min_hz="1.0"/> -->
+            </Parallel>
+
+            <!-- <Action ID="CalculateFTTI"
                     in_speed="{@current_vel}"/> -->
             
         </Sequence>

@@ -9,7 +9,12 @@
 #include <string>
 
 #include "monitor/update_system_state.hpp"
-// #include "monitor/lidar_check.hpp"
+#include "behaviortree_ros2/bt_topic_sub_node.hpp"
+
+// 토픽 구독 노드
+#include "monitor/vel_subscriber.hpp"
+#include "monitor/heading_subscriber.hpp"
+#include "monitor/lidar_check.hpp"
 // #include "monitor/camera_check.hpp"
 // #include "monitor/imu_check.hpp"
 // #include "monitor/gps_check.hpp"
@@ -33,21 +38,29 @@ int main(int argc, char** argv)
     BehaviorTreeFactory factory;
     std::signal(SIGINT, signal_handler);
 
+    //로스 관련
+    BT::RosNodeParams params;
+    params.nh = shared_node;
+
+    //구독노드
+    factory.registerNodeType<VelSubscriber>("VelSubscriber", params);
+    factory.registerNodeType<HeadingSubscriber>("HeadingSubscriber", params);
+
+
     //블랙보드 설정
     auto blackboard = Blackboard::create();
-    
-    blackboard->set("current_vel", 0.0);
-    
+
+    blackboard->set("vel_x", 0.0);
+    blackboard->set("vel_y", 0.0);
     blackboard->set("current_heading", 0.0);
-    
+
     std::string current_w = "Lidar,Camera";
     blackboard->set("current_w", current_w);
     //
 
     //팩토리 설정
-    factory.registerNodeType<UpdateSystemState>("UpdateSystemState");
-
-    // factory.registerNodeType<LidarCheck>("LidarCheck");
+    factory.registerNodeType<UpdateSystemState>("UpdateSystemState", params);
+    factory.registerNodeType<LidarChecker>("LidarChecker",params);
     // factory.registerNodeType<CameraCheck>("CameraCheck");
     // factory.registerNodeType<ImuCheck>("ImuCheck");
     // factory.registerNodeType<GpsCheck>("GpsCheck");
