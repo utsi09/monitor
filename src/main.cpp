@@ -15,9 +15,9 @@
 #include "monitor/vel_subscriber.hpp"
 #include "monitor/heading_subscriber.hpp"
 #include "monitor/lidar_check.hpp"
-// #include "monitor/camera_check.hpp"
-// #include "monitor/imu_check.hpp"
-// #include "monitor/gps_check.hpp"
+#include "monitor/cam_check.hpp"
+#include "monitor/imu_check.hpp"
+#include "monitor/gps_check.hpp"
 // #include "monitor/calculate_ftti.hpp"
 
 using namespace std::chrono_literals;
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
     //구독노드
     factory.registerNodeType<VelSubscriber>("VelSubscriber", params);
     factory.registerNodeType<HeadingSubscriber>("HeadingSubscriber", params);
-
+    factory.registerNodeType<ObstacleSubscriber>("ObstacleSubscriber", params);
 
     //블랙보드 설정
     auto blackboard = Blackboard::create();
@@ -60,12 +60,14 @@ int main(int argc, char** argv)
 
     //팩토리 설정
     factory.registerNodeType<UpdateSystemState>("UpdateSystemState", params);
-    factory.registerNodeType<LidarChecker>("LidarChecker",params);
-    // factory.registerNodeType<CameraCheck>("CameraCheck");
-    // factory.registerNodeType<ImuCheck>("ImuCheck");
-    // factory.registerNodeType<GpsCheck>("GpsCheck");
+    factory.registerNodeType<CalculateFTTI>("CalculateFTTI");
 
-    // factory.registerNodeType<CalculateFTTI>("CalculateFTTI");
+    factory.registerNodeType<LidarChecker>("LidarChecker",params);
+    factory.registerNodeType<CamChecker>("CamChecker",params);
+    factory.registerNodeType<ImuChecker>("ImuChecker",params);
+    factory.registerNodeType<GpsChecker>("GpsChecker",params);
+
+    
     //
     auto tree = factory.createTreeFromFile(tree_path, blackboard);
     BT::Groot2Publisher groot_publisher(tree, 1666); //groot 퍼블리셔

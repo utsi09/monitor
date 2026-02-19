@@ -4,36 +4,44 @@
 #include <cmath>
 using namespace std;
 
-class LidarChecker : public BT::RosTopicSubNode<sensor_msgs::msg::PointCloud2>
+class LidarChecker : public BT::SyncActionNode
 {
 public:
     LidarChecker(const std::string& name, const BT::NodeConfig& conf,
                     const BT::RosNodeParams& params)
-                    : RosTopicSubNode(name, conf, params) {}
+                    : SyncActionNode(name, conf)
+    {
+        auto node = params.nh.lock();
+        rclcpp::QoS qos(10);
+        qos.best_effort();
+        sub_ = node->create_subscription<sensor_msgs::msg::PointCloud2>(
+            "lidar_points", qos,
+            [this](const sensor_msgs::msg::PointCloud2::SharedPtr){
+                last_time_ = node_->now();
+            }
+        );
+        node_ = node;
+    }
     static BT::PortsList providedPorts()
     {
-        return providedBasicPorts({
-            BT::OutputPort<double>("lidar_timeout", "라이다 타임아웃 시간"),
-        });
+        return {
+            BT::OutputPort<double>("lidar_timeout"),
+        };
     }
 
-    BT::NodeStatus onTick(const std::shared_ptr<sensor_msgs::msg::PointCloud2>& last_msg) override
+    BT::NodeStatus tick() override
     {
-        rclcpp::Time now = node_.lock()->now();
-        double timeout_duration = 0.0;
+        double timeout = -1.0;
+        if (last_time_.nanoseconds() != 0) {
+            timeout = (node_->now() - last_time_).seconds();
 
-        if (last_msg) {
-            last_time_ = rclcpp::Time(last_msg->header.stamp);
-        }
-        if (last_time_.nanoseconds() == 0) {
-            timeout_duration = -1.0;
-        } else {
-            timeout_duration = (now - last_time_).seconds();
-        }
-        setOutput("lidar_timeout", timeout_duration);
-        cout << timeout_duration << endl;
+        } 
+        setOutput("lidar_timeout", timeout);
+        cout <<"타임아웃 : "<< timeout*1000 <<" ms"<< endl;
         return BT::NodeStatus::SUCCESS;
     }
 private:
+    rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr sub_;
+    rclcpp::Node::SharedPtr node_;
     rclcpp::Time last_time_;
 };

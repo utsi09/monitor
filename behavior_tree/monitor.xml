@@ -12,6 +12,11 @@
                 <Action ID="HeadingSubscriber"
                 topic_name="/heading"
                 current_heading="{@current_heading}"/>
+
+                <Action ID="ObstacleSubscriber"
+                topic_name="/obstacles"
+                obstacles="{@obstacles}"/>
+
             </Parallel>
 
             <Action ID="UpdateSystemState"
@@ -20,11 +25,21 @@
                     current_heading="{@current_heading}"
                     important_sensors="{@important_sensors}"/>
 
-            <Parallel name="SensorChecks" success_count="1" failure_count="1">
-                <Action ID="LidarChecker" name="LidarChecker" topic_name="/lidar_points" lidar_timeout="{@lidar_timeout}"/>
-                <!-- <Action ID="CameraCheck" name="CameraCheck" topic="/zed/zed_node/rgb/color/rect/image/compressed" min_hz="10.0"/>
-                <Action ID="ImuCheck" name="ImuCheck"    topic="/imu/data" min_hz="50.0"/>
-                <Action ID="GpsCheck" name="GpsCheck"    topic="/fix" min_hz="1.0"/> -->
+            <Action ID="CalculateFTTI"
+                    obstacles="{@obstacles}"
+                    important_sensors="{@important_sensors}"
+
+                    lidar_ftti="{@lidar_ftti}"
+                    cam_ftti="{@cam_ftti}"
+                    imu_ftti="{@imu_ftti}"
+                    gps_ftti="{@gps_ftti}"
+                    />
+
+            <Parallel name="SensorChecks" success_count="4" failure_count="1">
+                <Action ID="LidarChecker" name="LidarChecker" lidar_timeout="{@lidar_timeout}"/>
+                <Action ID="CamChecker" name="CamChecker" topic_name="/zed/zed_node/rgb/color/rect/image/compressed" cam_timeout="{@cam_timeout}"/>
+                <Action ID="ImuChecker" name="ImuChecker"    topic_name="/imu/data" imu_timeout="{@imu_timeout}"/>
+                <Action ID="GpsChecker" name="GpsChecker"    topic_name="/fix" gps_timeout="{@gps_timeout}"/> 
             </Parallel>
 
             <!-- <Action ID="CalculateFTTI"
