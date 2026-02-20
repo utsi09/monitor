@@ -11,12 +11,12 @@
 using namespace BT;
 
 struct SensorFovSpec {
-    std::string name;       // 센서 이름 (출력용)
+    std::string name;       
     std::string frame_id;
     std::string ns;
     double h_fov_deg;
     double range;
-    float r, g, b, a;       // 기본 색상
+    float r, g, b, a;      
 };
 
 class UpdateSystemState : public SyncActionNode {

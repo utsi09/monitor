@@ -54,7 +54,6 @@ bool UpdateSystemState::isPathInFov(
         return false;
     }
 
-    // 센서 위치와 yaw (base_link 기준)
     double sx = tf.transform.translation.x;
     double sy = tf.transform.translation.y;
     double sensor_yaw = tf2::getYaw(tf.transform.rotation);
@@ -94,7 +93,6 @@ visualization_msgs::msg::Marker UpdateSystemState::createFovMarker(
 
     if (is_important) {
         marker.scale.x = 0.03;
-        // 쨍한 주황색
         marker.color.r = 1.0f;
         marker.color.g = 0.5f;
         marker.color.b = 0.0f;
@@ -157,7 +155,7 @@ NodeStatus UpdateSystemState::tick() {
     prev_heading_ = current_heading;
     prev_time_ = now;
 
-    // 예측 경로 생성
+    // 키네마틱
     double x = 0.0, y = 0.0;
     double heading = 0.0;
     double dt = 0.1;
@@ -212,17 +210,15 @@ NodeStatus UpdateSystemState::tick() {
     }
     fov_pub_->publish(fov_array);
 
-    // important_sensors 문자열 생성
     string important_str;
     for (size_t i = 0; i < important_list.size(); i++) {
         if (i > 0) important_str += ",";
         important_str += important_list[i];
     }
 
-    // 블랙보드에 발행
+    // 블랙보드
     setOutput("important_sensors", important_str);
 
-    // 디버깅 출력
     cout << "[Monitor] Important Sensors: "
          << (important_str.empty() ? "None" : important_str) << endl;
 

@@ -1,9 +1,11 @@
 #pragma once
 #include "behaviortree_ros2/bt_topic_sub_node.hpp"
-// #include <geometry_msgs/msg/twist_stamped.hpp>
+#include <hesai_zed_fusion/msg/obstacle_array.hpp>
 #include <cmath>
+#include <iostream>
+using namespace std;
 
-class ObastacleSubscriber : public BT::RosTopicSubNode<geometry_msgs::msg::TwistStamped>
+class ObastacleSubscriber : public BT::RosTopicSubNode<hesai_zed_fusion::msg::ObstacleArray>
 {
 public:
     ObastacleSubscriber(const std::string& name, const BT::NodeConfig& conf,
@@ -12,17 +14,36 @@ public:
     static BT::PortsList providedPorts()
     {
         return providedBasicPorts({
-            BT::OutputPort<double>("vel_x", "GPS 프레임 x 속도"),
-            BT::OutputPort<double>("vel_y", "GPS 프레임 y 속도"),
+            BT::OutputPort<double>("nearest_obstacle"),
         });
     }
 
-    BT::NodeStatus onTick(const std::shared_ptr<geometry_msgs::msg::TwistStamped>& last_msg) override
+    BT::NodeStatus onTick(const std::shared_ptr<hesai_zed_fusion::msg::ObstacleArray>& last_msg) override
     {
         if (last_msg) {
-            setOutput("vel_x", last_msg->twist.linear.x);
-            setOutput("vel_y", last_msg->twist.linear.y);
+            hesai_zed_fusion::msg::ObstacleArray nearest_obstacle;
+            double min_dist = numeric_limits<double>::max();
+
+            auto obstacles = last_msg->obstacles;
+
+            for (const auto &ob : obstacles) {
+                if (obs.distance < min_dist) {
+                    min_dist = obs.distance;
+                    closest_obs = obs;
+                }
+            }
+
+            setOutput("nearest_obstacle", min_dist);
+
+
         }
         return BT::NodeStatus::SUCCESS;
     }
+
+    // float create_uclidean(float rel_x, float rel_y, float rel_z){
+    //     float distance = 0;
+    //     distance = sqrt(rel_x**2 + rel_y**2 + rel_z**2);
+    //     return distance;
+    // }
+
 };

@@ -14,11 +14,12 @@
 // 토픽 구독 노드
 #include "monitor/vel_subscriber.hpp"
 #include "monitor/heading_subscriber.hpp"
+#include "monitor/obstacle_subscriber.hpp"
 #include "monitor/lidar_check.hpp"
 #include "monitor/cam_check.hpp"
 #include "monitor/imu_check.hpp"
 #include "monitor/gps_check.hpp"
-// #include "monitor/calculate_ftti.hpp"
+#include "monitor/calculate_ftti.hpp"
 
 using namespace std::chrono_literals;
 using namespace BT;
